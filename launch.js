@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const { ClusterManager, HeartbeatManager, ReClusterManager } = require("discord-hybrid-sharding");
 const { Logger } = require("term-logger");
+const config = require("./config");
 
 const manager = new ClusterManager(`${__dirname}/base/bot.js`, {
 	totalShards: 1,
@@ -42,7 +43,9 @@ manager.on("clusterCreate", (cluster) => {
 	});
 });
 
-manager.on("debug", Logger.debug);
+if (config.status === "PROD") {
+	manager.on("debug", Logger.debug);
+}
 
 manager.extend(
 	new HeartbeatManager({ interval: 5000, maxMissedHeartbeats: 10 }),

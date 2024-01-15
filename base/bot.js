@@ -1,6 +1,7 @@
 const { Client, Intents, Collection, ActivityTypes } = require("oceanic.js");
 const { ClusterClient, getInfo } = require("discord-hybrid-sharding");
 const { Logger } = require("term-logger");
+const config = require("../config");
 
 const client = new Client({
 	auth: `Bot ${process.env.CLIENT_AUTH_TOKEN}`,
@@ -81,15 +82,15 @@ const client = new Client({
 });
 
 client.logger = Logger;
+client.config = config;
 client.commands = new Collection();
 client.cluster = new ClusterClient(client);
 
 process.on("unhandledRejection", (err) => Logger.error(err));
 process.on("uncaughtException", (err) => Logger.error(err));
 
-async () => {
+(async () => {
 	await require("./managers/Listeners")(client);
-	await require("./managers/Commands")(client);
-};
+})();
 
 client.connect().catch((err) => Logger.error(err));
